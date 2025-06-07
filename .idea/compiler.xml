@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="todo-server" />
+        <module name="audit-service" />
+        <module name="user-server" />
+        <module name="admin-service" />
+        <module name="gateway-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="commons" target="17" />
+      <module name="commons-module" target="17" />
+      <module name="gateway-server" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="TodoDemo" options="-parameters" />
+      <module name="admin-service" options="-parameters" />
+      <module name="audit-service" options="-parameters" />
+      <module name="commons" options="-parameters" />
+      <module name="commons-module" options="-parameters" />
+      <module name="gateway-server" options="-parameters" />
+      <module name="gateway-service" options="-parameters" />
+      <module name="todo-server" options="-parameters" />
+      <module name="user-server" options="-parameters" />
+    </option>
+  </component>
+</project>

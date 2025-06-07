@@ -1,0 +1,6 @@
+controller——>接口
+service——>业务逻辑
+mapper——>持久层，操作数据库
+
+快速打开接口
+双击shift搜索/xx/xxx

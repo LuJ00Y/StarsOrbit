@@ -1,0 +1,15 @@
+#server:
+#  port: 9081
+
+spring:
+  application:
+    name: todo-server
+  config:
+    import: nacos:todo-server.yaml
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.147.1:8848
+      config:
+        server-addr: 192.168.147.1:8848
+        file-extension: yaml

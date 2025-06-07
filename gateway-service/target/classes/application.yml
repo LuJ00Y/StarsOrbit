@@ -1,0 +1,55 @@
+#server:
+#  port: 9083
+#spring:
+#  cloud:
+#    gateway:
+#      globalcors:
+#        cors-configurations:
+#          '[/**]':
+#            allowedOrigins: "*"
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - PUT
+#              - DELETE
+#      discovery:
+#        locator:
+#          enabled: true #          ????????
+#      routes:
+#        - id: user-service
+#          uri: lb://user-service
+#          predicates:
+#            - Path=/user-service/**
+#          filters:
+#            - StripPrefix=1
+#        - id: todo-service
+#          uri: lb://todo-service
+#          predicates:
+#            - Path=/todo-service/**
+#          filters:
+#            - StripPrefix=1
+#        - id: admin-service
+#          uri: lb://admin-service
+#          predicates:
+#            - Path=/admin-service/**
+#          filters:
+#            - StripPrefix=1
+#        - id: audit-service
+#          uri: lb://audit-service
+#          predicates:
+#            - Path=/audit-service/**
+#          filters:
+#            - StripPrefix=1
+
+spring:
+  application:
+    name: gateway-server
+  config:
+    import: nacos:gateway-server.yaml
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.147.1:8848
+      config:
+        server-addr: 192.168.147.1:8848
+        file-extension: yaml
