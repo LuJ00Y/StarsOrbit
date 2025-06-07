@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="todo-server" />
+        <module name="common" />
         <module name="audit-service" />
         <module name="user-server" />
         <module name="admin-service" />
@@ -25,6 +26,7 @@
       <module name="TodoDemo" options="-parameters" />
       <module name="admin-service" options="-parameters" />
       <module name="audit-service" options="-parameters" />
+      <module name="common" options="-parameters" />
       <module name="commons" options="-parameters" />
       <module name="commons-module" options="-parameters" />
       <module name="gateway-server" options="-parameters" />
