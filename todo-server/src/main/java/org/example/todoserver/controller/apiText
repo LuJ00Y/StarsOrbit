@@ -1,0 +1,117 @@
+URL: /
+方法: GET
+响应:
+{
+  "code": 200,
+  "message": "成功",
+  "data": [
+    {
+      "id": 1,
+      "name": "完成项目报告",
+      "category": "工作",
+      "complete": false
+    },
+    {
+      "id": 2,
+      "name": "购买生活用品",
+      "category": "购物",
+      "complete": true
+    }
+  ]
+}
+
+URL: /
+方法: POST
+请求体:
+json
+{
+  "name": "新任务名称",
+  "category": "学习"
+}
+响应:
+json
+{
+  "code": 201,
+  "message": "任务创建成功",
+  "data": {
+    "id": 3,
+    "name": "新任务名称",
+    "category": "学习",
+    "complete": false
+  }
+}
+
+更新待办事项
+URL: /{id}
+方法: PUT
+路径参数:
+id: 待办事项 ID
+请求体:
+json
+{
+  "name": "更新后的任务名称",
+  "category": "健康",
+  "complete": true
+}
+响应:
+json
+{
+  "code": 200,
+  "message": "任务更新成功",
+  "data": {
+    "id": 1,
+    "name": "更新后的任务名称",
+    "category": "健康",
+    "complete": true
+  }
+}
+
+删除单个待办事项
+URL: /{id}
+方法: DELETE
+路径参数:
+id: 待办事项 ID
+响应:
+json
+{
+  "code": 200,
+  "message": "任务删除成功"
+}
+
+清除已完成待办事项
+URL: /completed
+方法: DELETE
+响应:
+json
+{
+  "code": 200,
+  "message": "已清除所有已完成任务",
+  "data": 3 // 删除的任务数量
+}
+清除所有待办事项
+URL: /all
+方法: DELETE
+响应:
+json
+{
+  "code": 200,
+  "message": "已清除所有任务",
+  "data": 5 // 删除的任务总数
+}
+切换任务完成状态
+URL: /{id}/toggle
+方法: PATCH
+路径参数:
+id: 待办事项 ID
+响应:
+json
+{
+  "code": 200,
+  "message": "任务状态已更新",
+  "data": {
+    "id": 1,
+    "name": "任务名称",
+    "category": "工作",
+    "complete": true // 更新后的状态
+  }
+}

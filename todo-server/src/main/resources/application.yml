@@ -1,6 +1,10 @@
-#server:
-#  port: 9081
+server:
+  port: 9081
 
+mybatis:
+#  config-location: classpath:/mybatis-config.xml
+  mapper-locations: classpath:/mapper/*.xml
+  type-aliases-package: org.example.mapper
 spring:
   application:
     name: todo-server
@@ -13,3 +17,8 @@ spring:
       config:
         server-addr: 192.168.147.1:8848
         file-extension: yaml
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/tododb?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: "040906"
+    driver-class-name: com.mysql.cj.jdbc.Driver

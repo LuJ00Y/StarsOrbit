@@ -1,15 +1,17 @@
 package org.example.todoserver.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
 
-@Entity
+import java.time.LocalDateTime;
+
+
+
+@Data
 public class TodoItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String category;
     private String name;
@@ -21,31 +23,22 @@ public class TodoItem {
 
     }
 
-    public Long getId() {
-        return id;
+
+    @Column(updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    // 状态更新方法
+    public void toggleComplete() {
+        this.complete = !this.complete;
+        this.updatedAt = LocalDateTime.now();
     }
 
-    public void setId(Long id) {
-        this.id = id;
-        return;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-        return;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-        return;
+    // 软删除方法
+    public void softDelete() {
+        this.deleted = true;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public boolean isComplete() {
@@ -56,24 +49,12 @@ public class TodoItem {
         this.complete = complete;
         return;
     }
-
     public boolean isDeleted() { return  false;}
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
         return;
     }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-
-
 
 
     public TodoItem(String category, String name) {
