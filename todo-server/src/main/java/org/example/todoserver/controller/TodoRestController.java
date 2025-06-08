@@ -2,21 +2,24 @@ package org.example.todoserver.controller;
 
 import org.example.todoserver.entity.TodoItem;
 import org.example.todoserver.mapper.TodoMapper;
+import org.example.todoserver.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping(path = "/todo")
 public class TodoRestController {
 
     @Autowired
-    private TodoMapper repository;
+    private TodoService todoService;
 
     @GetMapping("/all")
-    public @ResponseBody Iterable<TodoItem> getAll() {
-        Iterable<TodoItem> todoList = repository.findAll();
-        return repository.findAll();
+    public @ResponseBody List<TodoItem> getAll() {
+        List<TodoItem> todoList = todoService.findAll();
+        return todoList;
     }
 
 //    @PostMapping("/add")

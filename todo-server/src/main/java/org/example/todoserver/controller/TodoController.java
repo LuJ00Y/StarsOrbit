@@ -1,10 +1,8 @@
 package org.example.todoserver.controller;
 
-import jakarta.annotation.Resource;
 import org.example.todoserver.dto.TodoListViewModel;
 import org.example.todoserver.entity.TodoItem;
 
-import org.example.todoserver.mapper.TodoMapper;
 import org.example.todoserver.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,11 +44,12 @@ public class TodoController {
 //        //添加了一个新的TodoItem对象到Model中，用于表单提交新项
 //        return "index";
 //    }
+
     // 获取用户所有待办事项
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<TodoItem>> getUserTodos(@PathVariable Long userId) {
+    public ResponseEntity<TodoItem> getUserTodos(@PathVariable Long userId) {
         List<TodoItem> todos = todoService.getUserTodos(userId);
-        return ResponseEntity.ok(todos);
+        return ResponseEntity.ok((TodoItem) todos);
     }
 
 //    //添加新的清单
@@ -118,13 +117,13 @@ public class TodoController {
         return ResponseEntity.ok(stats);
     }
 
-//    /**
-//    * 查询当个用户的信息
-//    */
-//    @GetMapping("/user/{userId}")
-//    public List<TodoItem> getUserTodos(@PathVariable Long userId) {
-//        return todoService.getUserTodos(userId);
-//    }
+    /**
+    * 查询当个用户的信息
+    */
+    @GetMapping("/{userId}")
+    public List<TodoItem> getTodos(@PathVariable Long userId) {
+        return todoService.getTodos(userId);
+    }
 //    /**
 //     * 查询当个用户的信息
 //     */

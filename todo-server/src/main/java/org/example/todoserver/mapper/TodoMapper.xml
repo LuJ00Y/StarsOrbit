@@ -4,24 +4,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.example.todoserver.mapper.TodoMapper">
     <update id="softDelete">
-        UPDATE todo_item SET deleted = TRUE WHERE id=#{id} AND user_id=#{userId}
+        UPDATE todo_item SET deleted = TRUE WHERE id=#{id} AND user_id=#{userId};
     </update>
     <update id="softDeleteCompletedByUserId">
-        UPDATE todo_item SET deleted = TRUE WHERE user_id=#{userId} AND complete = true AND deleted = false
+        UPDATE todo_item SET deleted = TRUE WHERE user_id=#{userId} AND complete = true AND deleted = false;
     </update>
     <update id="softDeleteAllByUserId">
-        UPDATE todo_item SET deleted = TRUE WHERE user_id=#{userId}  AND deleted = false
+        UPDATE todo_item SET deleted = TRUE WHERE user_id=#{userId}  AND deleted = false;
     </update>
 
     <select id="findByUserIdAndDeletedFalse" resultType="org.example.todoserver.entity.TodoItem">
-        SELECT todo_item.* FROM todo_item,`user` WHERE user_id=`user`.id AND user_id=#{user_id} AND deleted = FALSE
+        SELECT todo_item.* FROM todo_item,`user` WHERE user_id=`user`.id AND user_id=#{userId} AND deleted = FALSE;
     </select>
     <select id="findByUserId" resultType="org.example.todoserver.entity.TodoItem">
-        SELECT todo_item.* FROM todo_item,`user` WHERE user_id=`user`.id AND user_id=#{user_id}
+        SELECT todo_item.* FROM todo_item,`user` WHERE user_id=`user`.id AND user_id=#{userId};
     </select>
     <select id="findByUserIdAndCompleteTrueAndDeletedFalse"
             resultType="org.example.todoserver.entity.TodoItem">
-        SELECT * FROM todo_item WHERE user_id=#{userId} AND complete = TRUE AND deleted = FALSE
+        SELECT * FROM todo_item WHERE user_id=#{userId} AND complete = TRUE AND deleted = FALSE;
     </select>
     <!--            id是mapper里面的方法名-->
     <!--    完整包路径名字-->

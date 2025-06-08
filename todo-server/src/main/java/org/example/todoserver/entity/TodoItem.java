@@ -1,6 +1,5 @@
 package org.example.todoserver.entity;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -24,7 +23,7 @@ public class TodoItem {
     }
 
 
-    @Column(updatable = false)
+//    @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime updatedAt = LocalDateTime.now();

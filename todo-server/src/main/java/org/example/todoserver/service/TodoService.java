@@ -85,6 +85,15 @@ public class TodoService {
         stats.setIncomplete(allTodos.size() - completedTodos.size());
         return stats;
     }
+
+    public List<TodoItem> getTodos(Long userId) {
+        return todoMapper.findByUserIdAndDeletedFalse(userId);
+    }
+
+    public List<TodoItem> findAll() {
+        return todoMapper.findAll();
+    }
+
     // 统计信息DTO
     @Data
     public static class TodoStats {
