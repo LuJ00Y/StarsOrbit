@@ -3,6 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.example.todoserver.mapper.TodoMapper">
+    <insert id="insertTodo" parameterType="org.example.todoserver.entity.TodoItem">
+        INSERT INTO `tododb`.`todo_item` (`category`, `complete`, `name`, `user_id`, `deleted`)
+            VALUE (#{category},false,#{name},#{userId},false);
+    </insert>
     <update id="softDelete">
         UPDATE todo_item SET deleted = TRUE WHERE id=#{id} AND user_id=#{userId};
     </update>
@@ -12,9 +16,19 @@
     <update id="softDeleteAllByUserId">
         UPDATE todo_item SET deleted = TRUE WHERE user_id=#{userId}  AND deleted = false;
     </update>
+    <update id="updateTodoName" parameterType="org.example.todoserver.entity.TodoItem">
+        UPDATE `tododb`.`todo_item`
+        SET `name` = #{name}
+        WHERE `deleted` = b'0' AND `id` = #{id} AND `complete` = b'0';
+    </update>
+    <update id="updateTodoType" parameterType="org.example.todoserver.entity.TodoItem">
+        UPDATE `tododb`.`todo_item`
+        SET `category` = #{category}
+        WHERE `deleted` = b'0' AND `id` = #{id} AND `complete` = b'0';
+    </update>
 
     <select id="findByUserIdAndDeletedFalse" resultType="org.example.todoserver.entity.TodoItem">
-        SELECT todo_item.* FROM todo_item,`user` WHERE user_id=`user`.id AND user_id=#{userId} AND deleted = FALSE;
+        SELECT todo_item.* FROM todo_item WHERE  user_id=#{userId} AND deleted = FALSE;
     </select>
     <select id="findByUserId" resultType="org.example.todoserver.entity.TodoItem">
         SELECT todo_item.* FROM todo_item,`user` WHERE user_id=`user`.id AND user_id=#{userId};
@@ -22,6 +36,10 @@
     <select id="findByUserIdAndCompleteTrueAndDeletedFalse"
             resultType="org.example.todoserver.entity.TodoItem">
         SELECT * FROM todo_item WHERE user_id=#{userId} AND complete = TRUE AND deleted = FALSE;
+    </select>
+    <select id="findTodoById" resultType="org.example.todoserver.entity.TodoItem">
+        SELECT * FROM `tododb`.`todo_item`
+        WHERE id = #{id} AND deleted = FALSE
     </select>
     <!--            id是mapper里面的方法名-->
     <!--    完整包路径名字-->

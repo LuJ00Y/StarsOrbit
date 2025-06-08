@@ -1,6 +1,5 @@
 package org.example.todoserver.controller;
 
-import org.example.todoserver.dto.TodoListViewModel;
 import org.example.todoserver.entity.TodoItem;
 
 import org.example.todoserver.service.TodoService;
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,9 +45,10 @@ public class TodoController {
 
     // 获取用户所有待办事项
     @GetMapping("/user/{userId}")
-    public ResponseEntity<TodoItem> getUserTodos(@PathVariable Long userId) {
+    public ResponseEntity<List<TodoItem>> getUserTodos(@PathVariable Long userId) {
         List<TodoItem> todos = todoService.getUserTodos(userId);
-        return ResponseEntity.ok((TodoItem) todos);
+//        return ResponseEntity.ok((TodoItem) todos);
+        return ResponseEntity.ok(todos); // 直接返回列表
     }
 
 //    //添加新的清单
@@ -60,9 +59,9 @@ public class TodoController {
 //        return "redirect:/";
 //    }
     // 添加新待办事项
-    @PostMapping("/")
-    public ResponseEntity<TodoItem> addTodo(@RequestBody TodoItem todoItem) {
-        TodoItem newTodo = todoService.addTodo(todoItem);
+    @PostMapping("/add")
+    public ResponseEntity<Integer> insertTodo(@RequestBody TodoItem todoItem) {
+        int newTodo = todoService.insertTodo(todoItem);
         return ResponseEntity.status(201).body(newTodo);
     }
 
@@ -77,9 +76,37 @@ public class TodoController {
 //        return "redirect:/";
 //    }
     // 更新待办事项
-    @PutMapping("/{id}")
-    public ResponseEntity<TodoItem> updateTodo(@PathVariable Long id, @RequestBody TodoItem todoItem) {
-        TodoItem updatedTodo = todoService.updateTodo(id, todoItem);
+//    @PutMapping("/{id}")
+//    public ResponseEntity<TodoItem> updateTodoName(@PathVariable Long id, @RequestBody TodoItem todoItem) {
+//        TodoItem updatedTodo = todoService.updateTodoName(id, todoItem);
+//        return ResponseEntity.ok(updatedTodo);
+//    }
+    @PostMapping("/updateName/{id}")
+    public ResponseEntity<TodoItem> updateTodoName(
+            @PathVariable Long id,
+            @RequestBody TodoItem todoItem
+    ) {
+        // 从Header获取用户ID    @RequestHeader("X-User-Id") Long userId
+
+        // 设置请求体中的用户ID（确保不为null）
+        todoItem.setUserId(1L);
+//        todoItem.getUserId();
+
+        TodoItem updatedTodo = todoService.updateTodoName(id, todoItem);
+        return ResponseEntity.ok(updatedTodo);
+    }
+    @PostMapping("/updateType/{id}")
+    public ResponseEntity<TodoItem> updateTodoType(
+            @PathVariable Long id,
+            @RequestBody TodoItem todoItem
+    ) {
+        // 从Header获取用户ID    @RequestHeader("X-User-Id") Long userId
+
+        // 设置请求体中的用户ID（确保不为null）
+        todoItem.setUserId(1L);
+//        todoItem.getUserId();
+
+        TodoItem updatedTodo = todoService.updateTodoType(id, todoItem);
         return ResponseEntity.ok(updatedTodo);
     }
 
@@ -138,8 +165,8 @@ public class TodoController {
 //    }
 //
 //    @PutMapping("/{id}")
-//    public TodoItem updateTodo(@PathVariable Long id, @RequestBody TodoItem todoItem) {
-//        return todoService.updateTodo(id, todoItem);
+//    public TodoItem updateTodoName(@PathVariable Long id, @RequestBody TodoItem todoItem) {
+//        return todoService.updateTodoName(id, todoItem);
 //    }
 //
 }
