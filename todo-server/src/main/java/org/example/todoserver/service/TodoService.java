@@ -111,13 +111,21 @@ public class TodoService {
     public TodoItem save(TodoItem item) {
         return todoMapper.save(item);
     }
+
     // 切换任务完成状态
-    public TodoItem toggleTodoStatus(Long id) {
-        TodoItem todoItem = todoMapper.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("TodoItem not found with id: " + id));
+    public int toggleTodoStatus(Long id) {
+        TodoItem todoItem = (TodoItem) todoMapper.findTodoById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("没有找到id为" + id+"的待办事项"));
 
         todoItem.toggleComplete();
-        return todoMapper.save(todoItem);
+        // 执行更新
+        int updated = todoMapper.toggleTodoStatus(todoItem);
+
+        if (updated == 0) {
+            throw new RuntimeException("状态更新失败，ID: " + id);
+        }
+
+        return updated;
     }
 
     // 软删除单个待办事项

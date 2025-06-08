@@ -81,7 +81,7 @@ public class TodoController {
 //        TodoItem updatedTodo = todoService.updateTodoName(id, todoItem);
 //        return ResponseEntity.ok(updatedTodo);
 //    }
-    @PostMapping("/updateName/{id}")
+    @PutMapping("/updateName/{id}")
     public ResponseEntity<TodoItem> updateTodoName(
             @PathVariable Long id,
             @RequestBody TodoItem todoItem
@@ -95,7 +95,7 @@ public class TodoController {
         TodoItem updatedTodo = todoService.updateTodoName(id, todoItem);
         return ResponseEntity.ok(updatedTodo);
     }
-    @PostMapping("/updateType/{id}")
+    @PutMapping("/updateType/{id}")
     public ResponseEntity<TodoItem> updateTodoType(
             @PathVariable Long id,
             @RequestBody TodoItem todoItem
@@ -110,10 +110,12 @@ public class TodoController {
         return ResponseEntity.ok(updatedTodo);
     }
 
+
+    //tag
     // 切换任务完成状态
     @PatchMapping("/{id}/toggle")
-    public ResponseEntity<TodoItem> toggleTodoStatus(@PathVariable Long id) {
-        TodoItem updatedTodo = todoService.toggleTodoStatus(id);
+    public ResponseEntity<Integer> toggleTodoStatus(@PathVariable Long id) {
+        int updatedTodo = todoService.toggleTodoStatus(id);
         return ResponseEntity.ok(updatedTodo);
     }
 

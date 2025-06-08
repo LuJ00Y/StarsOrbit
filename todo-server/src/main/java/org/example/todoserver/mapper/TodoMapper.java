@@ -39,4 +39,5 @@ public interface TodoMapper extends CrudRepository<TodoItem, Long> {
 
     Optional<Object> findTodoById(Long id);
 
+    int toggleTodoStatus(TodoItem todoItem);
 }

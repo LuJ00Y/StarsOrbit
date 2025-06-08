@@ -26,6 +26,11 @@
         SET `category` = #{category}
         WHERE `deleted` = b'0' AND `id` = #{id} AND `complete` = b'0';
     </update>
+    <update id="toggleTodoStatus" parameterType="org.example.todoserver.entity.TodoItem">
+        UPDATE `tododb`.`todo_item`
+        SET `complete` = #{complete}
+        WHERE `deleted` = false AND `id` = #{id};
+    </update>
 
     <select id="findByUserIdAndDeletedFalse" resultType="org.example.todoserver.entity.TodoItem">
         SELECT todo_item.* FROM todo_item WHERE  user_id=#{userId} AND deleted = FALSE;
