@@ -18,9 +18,9 @@ public interface UserMapper {
     User findByEmail(String email);
 
     //用户添加
-    @Insert("INSERT INTO `user` (`username`, `password`, `email`, `isAdmin`,`enabled`) VALUES (#{username}, #{password} ,#{email}, #{isAdmin},#{enabled})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
-    int save(User user);
+//    @Insert("INSERT INTO `user` (`username`, `password`, `email`, `isAdmin`,`enabled`) VALUES (#{username}, #{password} ,#{email}, #{admin},#{enabled})")
+//    @Options(useGeneratedKeys = true, keyProperty = "id")
+//    int save(User user);
     // MyBatis 要求插入操作的返回类型应该是 void (小写关键字) 或 int (表示受影响的行数)。
 
     //用户更新
@@ -37,8 +37,8 @@ public interface UserMapper {
     void updatePassword(User user);
 
     // 用于令牌查询
-    @Select("SELECT * FROM password_reset_token WHERE user_id = #{userId}")
-    PasswordResetToken findByUserId(Long userId);
+    @Select("SELECT * FROM password_reset_token WHERE user_id = #{id}")
+    PasswordResetToken findByUserId(Long id);
 
     //通过用户名查询
     @Select("SELECT * FROM user WHERE username = #{username}")
@@ -47,13 +47,7 @@ public interface UserMapper {
     @Update("UPDATE `tododb`.`user` SET `enabled` = FALSE WHERE `id` = #{id};")
     void deleteById(Long id);
 
-    @Select("SELECT * FROM user WHERE " +
-            "username = #{username} " +
-            "or id = #{id} " +
-            "or email = #{email} " +
-            "or isAdmin=#{isAdmin} " +
-            "or enabled=#{enabled}")
-    List<User> selectlist(User user);
+    List<User> getOneUser(User user);
 
     @Insert("INSERT INTO `tododb`.`user` (`username`, `password`, `email`, `isAdmin`, `enabled`) " +
             "VALUES (#{username},#{password},#{email},false,true);")

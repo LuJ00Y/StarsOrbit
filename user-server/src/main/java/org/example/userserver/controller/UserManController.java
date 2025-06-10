@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.View;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ import java.util.List;
 public class UserManController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private View error;
 
 
     /**查找所有用户*/
@@ -38,12 +41,28 @@ public class UserManController {
 //    }
     /**查找单个用户*/
     @GetMapping("/user")
-    public ResponseEntity<User> selectList(User user) {
-        List<User> list =userService.selectlist(user);
-        if(list == null) {
+    public ResponseEntity<User> getOneUser(@RequestParam(required = false) String username,
+                                           @RequestParam(required = false) String email,
+                                           @RequestParam(required = false) Long id,
+                                           @RequestParam(required = false) Boolean admin,
+                                           @RequestParam(required = false) Boolean enabled){
+        User query = new User();
+        query.setUsername(username);
+        query.setEmail(email);
+        query.setId(id);
+        query.setAdmin(admin);
+        query.setEnabled(enabled);
+
+        List<User> users = userService.getOneUser(query);
+
+        if(users == null || users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(user, HttpStatus.OK);
+//        if(users.size() > 1) {
+//            log.warn("多个用户匹配查询条件: username={}, email={}", username, email);
+//        }
+        // 如果有多个匹配项，返回第一个（或根据业务逻辑选择）
+        return new ResponseEntity<>(users.get(0), HttpStatus.OK);
     }
 
     /**

@@ -113,8 +113,8 @@ public class UserService {
             return 1; // 邮箱已存在
         }
         // 设置默认值
-        if (user.getIsAdmin() == null) {
-            user.setIsAdmin(false);
+        if (user.getAdmin() == null) {
+            user.setAdmin(false);
         }
         user.setEnabled(true); // 用户可用
 
@@ -227,12 +227,12 @@ public class UserService {
         }
     }
 
-    public void save(User user) {
-        userMapper.save(user);
-    }
+//    public void save(User user) {
+//        userMapper.save(user);
+//    }
 
-    public List<User> selectlist(User user) {
-        return userMapper.selectlist(user);
+    public List<User> getOneUser(User user) {
+        return userMapper.getOneUser(user);
     }
 
     public PageInfo<User> selectPage(int pageNum, int pageSize) {
@@ -247,8 +247,7 @@ public class UserService {
     }
 
     public int deleteAll() {
-        int deleteCount=userMapper.deleteAll();
-        return deleteCount;
+        return userMapper.deleteAll();
     }
 
 
