@@ -67,9 +67,6 @@ public class UserService {
         return userMapper.findById(id);
     }
 
-    public void updateUserById(User user) {
-
-    }
 
     //修改用户信息
     public void partialUpdateUser(Long id, Map<String, Object> updates) {
@@ -113,8 +110,8 @@ public class UserService {
             return 1; // 邮箱已存在
         }
         // 设置默认值
-        if (user.getAdmin() == null) {
-            user.setAdmin(false);
+        if (user.getRole() == null) {
+            user.setRole(false);
         }
         user.setEnabled(true); // 用户可用
 
@@ -235,6 +232,10 @@ public class UserService {
         return userMapper.getOneUser(user);
     }
 
+    public List<User> getUserList(User query) {
+        return userMapper.getOneUser(query);
+    }
+
     public PageInfo<User> selectPage(int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<User> list=userMapper.findAll();
@@ -249,6 +250,8 @@ public class UserService {
     public int deleteAll() {
         return userMapper.deleteAll();
     }
+
+
 
 
 //    @Transactional

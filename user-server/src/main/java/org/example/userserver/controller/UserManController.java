@@ -21,8 +21,6 @@ import java.util.List;
 public class UserManController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private View error;
 
 
     /**查找所有用户*/
@@ -30,27 +28,19 @@ public class UserManController {
     public List<User> getUser() {
         return userService.findAll();
     }
-    //查找单个用户
-//    @GetMapping("/user")
-//    public ResponseEntity<User> selectOneUser(@RequestParam long id) {
-//        User user = userService.findById(id);
-//        if(user == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        return new ResponseEntity<>(user, HttpStatus.OK);
-//    }
+
     /**查找单个用户*/
     @GetMapping("/user")
     public ResponseEntity<User> getOneUser(@RequestParam(required = false) String username,
                                            @RequestParam(required = false) String email,
                                            @RequestParam(required = false) Long id,
-                                           @RequestParam(required = false) Boolean admin,
+                                           @RequestParam(required = false) Boolean role,
                                            @RequestParam(required = false) Boolean enabled){
         User query = new User();
         query.setUsername(username);
         query.setEmail(email);
         query.setId(id);
-        query.setAdmin(admin);
+        query.setRole(role);
         query.setEnabled(enabled);
 
         List<User> users = userService.getOneUser(query);
@@ -63,6 +53,28 @@ public class UserManController {
 //        }
         // 如果有多个匹配项，返回第一个（或根据业务逻辑选择）
         return new ResponseEntity<>(users.get(0), HttpStatus.OK);
+    }
+
+    /**查找多个用户*/
+    @GetMapping("/userlist")
+    public ResponseEntity<List<User>> getUserList(@RequestParam(required = false) String username,
+                                                  @RequestParam(required = false) String email,
+                                                  @RequestParam(required = false) Long id,
+                                                  @RequestParam(required = false) Boolean role,
+                                                  @RequestParam(required = false) Boolean enabled){
+        User query =new User();
+        query.setUsername(username);
+        query.setEmail(email);
+        query.setId(id);
+        query.setRole(role);
+        query.setEnabled(enabled);
+
+        List<User> users = userService.getUserList(query);
+
+        if(users == null || users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     /**
@@ -84,7 +96,7 @@ public class UserManController {
      * 增加用户
      * 返回结果为影响行数
      * */
-    @GetMapping("/addUser")
+    @PostMapping("/addUser")
     public Result addUser(@RequestBody User user) {
         userService.addUser(user);
         return Result.success();
@@ -93,7 +105,7 @@ public class UserManController {
      * 增加管理员
      * 返回结果为影响行数
      * */
-    @GetMapping("/addAdmin")
+    @PostMapping("/addAdmin")
     public Result addAdmin(@RequestBody User user) {
         userService.addAdmin(user);
         return Result.success();

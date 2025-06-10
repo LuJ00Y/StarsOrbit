@@ -15,8 +15,8 @@
             <if test="id != null">
                 AND id = #{id}
             </if>
-            <if test="admin != null">
-                AND is_admin = #{admin}
+            <if test="role != null">
+                AND role = #{role}
             </if>
             <if test="enabled != null">
                 AND enabled = #{enabled}

@@ -49,18 +49,18 @@ public interface UserMapper {
 
     List<User> getOneUser(User user);
 
-    @Insert("INSERT INTO `tododb`.`user` (`username`, `password`, `email`, `isAdmin`, `enabled`) " +
+    @Insert("INSERT INTO `tododb`.`user` (`username`, `password`, `email`, `role`, `enabled`) " +
             "VALUES (#{username},#{password},#{email},false,true);")
     void addUser(User user);
 
-    @Insert("INSERT INTO `tododb`.`user` (`username`, `password`, `email`, `isAdmin`, `enabled`) " +
+    @Insert("INSERT INTO `tododb`.`user` (`username`, `password`, `email`, `role`, `enabled`) " +
             "VALUES (#{username},#{password},#{email},true,true);")
     void addAdmin(User user);
 
     @Update("UPDATE `tododb`.`user` SET `enabled` = FALSE;")
     int deleteAll();
 
-    @Insert("INSERT INTO `tododb`.`user` (`username`, `password`, `email`, `isAdmin`, `enabled`)" +
+    @Insert("INSERT INTO `tododb`.`user` (`username`, `password`, `email`, `role`, `enabled`)" +
             "VALUES (#{username},#{password},#{email},false,true);")
     int register(User user);
 }
