@@ -1,7 +1,8 @@
 package org.example.userserver.service;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;//法一
 //import org.apache.ibatis.mapping.Environment;
@@ -9,7 +10,6 @@ import org.example.userserver.entity.PasswordResetToken;
 import org.example.userserver.entity.User;
 import org.example.userserver.mapper.PasswordResetTokenMapper;
 import org.example.userserver.mapper.UserMapper;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +18,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -30,6 +31,7 @@ public class UserService {
 
     @Value("${app.base-url:http://localhost:8080}")//法二
     private String appBaseUrl;
+    public static User myuser;
 
 //    @Autowired
     private final UserMapper userMapper;
@@ -41,6 +43,7 @@ public class UserService {
 
 //    private static final Logger logger = LoggerFactory.getLogger(PasswordResetService.class);
 
+
     public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, PasswordResetTokenMapper tokenMapper, JavaMailSender mailSender, Environment env, TemplateEngine templateEngine) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
@@ -48,6 +51,24 @@ public class UserService {
         this.mailSender = mailSender;
 //        this.env = env;
         this.templateEngine = templateEngine;
+    }
+
+
+    public List<User> findAll() {
+        return userMapper.findAll();
+    }
+    public void addUser(User user) {
+        userMapper.addUser(user);
+    }
+    public void addAdmin(User user) {
+        userMapper.addAdmin(user);
+    }
+    public User findById(long id) {
+        return userMapper.findById(id);
+    }
+
+    public void updateUserById(User user) {
+
     }
 
     //修改用户信息
@@ -74,7 +95,7 @@ public class UserService {
      * @return 0表示成功
      * 1表示用户重复
      * 2表示失败
-     * 3表示密码不合格
+     * 3表示密码强度不足
      */
     public int register(User user) {
         // 检查邮箱是否已存在
@@ -176,6 +197,31 @@ public class UserService {
         }
     }
 
+    public void save(User user) {
+        userMapper.save(user);
+    }
+
+    public List<User> selectlist(User user) {
+        return userMapper.selectlist(user);
+    }
+
+    public PageInfo<User> selectPage(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<User> list=userMapper.findAll();
+        return PageInfo.of(list);
+    }
+
+    public void deleteById(long id) {
+//        userMapper.deleteById(userMapper.findAll().get(0).getId());
+        userMapper.deleteById(id);
+    }
+
+    public int deleteAll() {
+        int deleteCount=userMapper.deleteAll();
+        return deleteCount;
+    }
+
+
 //    @Transactional
 //    public void deleteUser(Long userId) {
 //        // 1. 删除用户
@@ -184,14 +230,6 @@ public class UserService {
 //        // 2. 发布用户删除事件
 //        UserDeletedEvent event = new UserDeletedEvent(userId);
 //        eventPublisher.publishEvent(event);
-//    }
-//    // 在TodoService中限制查询范围
-//    public List<TodoItem> findByUserId(Long userId) {
-//        return repository.findByUserId(userId);
-//    }
-//
-//    public List<TodoItem> findAll() {
-//        return repository.findAll();
 //    }
 
 }

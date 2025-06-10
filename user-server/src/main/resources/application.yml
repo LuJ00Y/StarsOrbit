@@ -1,5 +1,14 @@
 #server:
 #  port: 9080
+mybatis:
+#  config-location: classpath:/mybatis-config.xml
+  mapper-locations: classpath:/mapper/*.xml
+  type-aliases-package: org.example.mapper
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    可以打印mysql语句
+    map-underscore-to-camel-case: true
+#    帮助我们使用驼峰，java里面用驼峰表示属性
 
 spring:
   application:

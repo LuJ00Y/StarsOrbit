@@ -1,7 +1,8 @@
-package org.example.userserver.config;
+package org.example.userserver.controller;
 
 import jakarta.mail.MessagingException;
 import org.example.userserver.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthController {
 
+    @Autowired
     UserService userService;
 
     // 请求密码重置

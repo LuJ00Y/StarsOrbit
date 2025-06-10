@@ -5,8 +5,7 @@ package org.example.userserver.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-//
-@Entity
+
 @Data//一键实现gets/sets方法
 //@Table(name = "user")
 public class User {

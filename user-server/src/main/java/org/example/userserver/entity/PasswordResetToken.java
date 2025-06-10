@@ -6,7 +6,6 @@ import lombok.Data;
 import java.util.Date;
 import java.util.Calendar;
 
-@Entity
 @Data
 public class PasswordResetToken {
     private static final int EXPIRATION_HOURS = 1; // 令牌有效期1小时

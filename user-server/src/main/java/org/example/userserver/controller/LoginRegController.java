@@ -19,13 +19,6 @@ public class LoginRegController {
     @Autowired
     UserService userService;
 
-
-
-    @GetMapping("/user_get")
-    public User getUserById(){
-        return UserService.myuser;
-    }
-
     @RequestMapping("/login_error")
     public Result loginError() {
         return new Result("error", "登录失败!");
@@ -66,22 +59,4 @@ public class LoginRegController {
         }
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<?> register(@RequestBody User user) {
-//        int status = userService.register(user);
-//
-//        if (status == RegisterStatus.SUCCESS) {
-//            return ResponseEntity.ok(Map.of(
-//                    "status", "success",
-//                    "message", "注册成功",
-//                    "userId", user.getId()
-//            ));
-//        } else {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-//                    "status", "error",
-//                    "code", status,
-//                    "message", RegisterStatus.getMessage(status)
-//            ));
-//        }
-//    }
 }
