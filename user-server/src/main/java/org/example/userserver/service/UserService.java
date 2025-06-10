@@ -98,6 +98,15 @@ public class UserService {
      * 3表示密码强度不足
      */
     public int register(User user) {
+        // 1. 验证必要字段
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("邮箱不能为空");
+        }
+        // 2. 密码非空检查
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            return 4; // 新增密码为空错误码
+        }
+
         // 检查邮箱是否已存在
         User existingUser = userMapper.findByEmail(user.getEmail());
         if (existingUser != null) {
@@ -109,6 +118,7 @@ public class UserService {
         }
         user.setEnabled(true); // 用户可用
 
+        // 5. 密码强度检查
         if (!isPasswordStrong(user.getPassword())) {
             return 3; // 密码强度不足
         }
@@ -116,15 +126,35 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // 保存用户
-        int result = userMapper.save(user);
-
+        int result = userMapper.register(user);
         // 返回注册结果
         return result > 0 ? 0 : 2; // 0=成功, 2=失败
     }
     private boolean isPasswordStrong(String password) {
+        if (password == null || password.isEmpty()) {
+            return false;
+        }
+
         // 至少8个字符，包含大小写字母、数字和特殊字符
         String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
-        return password.matches(pattern);
+//        return password.matches(pattern);
+        if (password.length() < 8) {
+            return false;
+        }
+
+        boolean hasDigit = false;
+        boolean hasLower = false;
+        boolean hasUpper = false;
+        boolean hasSpecial = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isDigit(c)) hasDigit = true;
+            if (Character.isLowerCase(c)) hasLower = true;
+            if (Character.isUpperCase(c)) hasUpper = true;
+            if ("@#$%^&+=!".indexOf(c) >= 0) hasSpecial = true;
+        }
+
+        return hasDigit && hasLower && hasUpper && hasSpecial;
     }
 
 

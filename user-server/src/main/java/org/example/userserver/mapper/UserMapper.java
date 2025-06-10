@@ -65,4 +65,8 @@ public interface UserMapper {
 
     @Update("UPDATE `tododb`.`user` SET `enabled` = FALSE;")
     int deleteAll();
+
+    @Insert("INSERT INTO `tododb`.`user` (`username`, `password`, `email`, `isAdmin`, `enabled`)" +
+            "VALUES (#{username},#{password},#{email},false,true);")
+    int register(User user);
 }

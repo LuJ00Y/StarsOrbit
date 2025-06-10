@@ -4,10 +4,8 @@ import org.example.common.Result;
 import org.example.userserver.entity.User;
 import org.example.userserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -42,20 +40,25 @@ public class LoginRegController {
     }
 
     @PostMapping("/register")
-    public Result reg(User user) {
-        int result = userService.register(user);
-        if (result == 0) {
-            //成功
-            return new Result("success", "注册成功!");
-        } else if (result == 1) {
-            //失败
-            return new Result("error", "邮箱已存在");
-        }else if (result == 3) {
-            //失败
-            return new Result("error", "密码强度不足!");
-        }else {
-            //失败
-            return new Result("error", "注册失败!");
+    public ResponseEntity<Result> reg(@RequestBody User user) { // 添加 @RequestBody
+        try {
+            int result = userService.register(user);
+            switch (result) {
+                case 0:
+                    return ResponseEntity.ok(new Result("success", "注册成功!"));
+                case 1:
+                    return ResponseEntity.badRequest().body(new Result("error", "邮箱已存在"));
+                case 2:
+                    return ResponseEntity.internalServerError().body(new Result("error", "注册失败"));
+                case 3:
+                    return ResponseEntity.badRequest().body(new Result("error", "密码强度不足!"));
+                case 4: // 新增密码为空错误
+                    return ResponseEntity.badRequest().body(new Result("error", "密码不能为空!"));
+                default:
+                    return ResponseEntity.internalServerError().body(new Result("error", "未知错误"));
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new Result("error", e.getMessage()));
         }
     }
 
