@@ -6,6 +6,7 @@ import org.example.todoserver.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -114,9 +115,15 @@ public class TodoController {
     //tag
     // 切换任务完成状态
     @PatchMapping("/{id}/toggle")
-    public ResponseEntity<Integer> toggleTodoStatus(@PathVariable Long id) {
+    public ResponseEntity<TodoItem> toggleTodoStatus(@PathVariable Long id) {
         int updatedTodo = todoService.toggleTodoStatus(id);
-        return ResponseEntity.ok(updatedTodo);
+        if (updatedTodo > 0) {
+            TodoItem updatedItem = todoService.getTodoById(id);
+            return ResponseEntity.ok(updatedItem);
+
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     // 删除单个待办事项

@@ -1,6 +1,7 @@
 package org.example.todoserver.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.example.todoserver.entity.TodoItem;
 import org.springframework.data.repository.CrudRepository;
@@ -39,5 +40,8 @@ public interface TodoMapper extends CrudRepository<TodoItem, Long> {
 
     Optional<Object> findTodoById(Long id);
 
-    int toggleTodoStatus(TodoItem todoItem);
+    // Mapper 接口
+    int toggleTodoStatus(@Param("id") Long id, @Param("complete") Boolean complete);
+
+    TodoItem getTodoById(Long id);
 }

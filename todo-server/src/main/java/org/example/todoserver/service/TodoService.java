@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.example.exception.ResourceNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Service
 public class TodoService {
@@ -117,13 +118,17 @@ public class TodoService {
         TodoItem todoItem = (TodoItem) todoMapper.findTodoById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("没有找到id为" + id+"的待办事项"));
 
-        todoItem.toggleComplete();
-        // 执行更新
-        int updated = todoMapper.toggleTodoStatus(todoItem);
+        // 获取当前状态并切换
+        boolean newStatus = !todoItem.isComplete();
+        // 直接更新数据库
+        int updated = todoMapper.toggleTodoStatus(id, newStatus);
 
         if (updated == 0) {
             throw new RuntimeException("状态更新失败，ID: " + id);
         }
+        // 更新实体状态（可选，保持一致性）
+        todoItem.setComplete(newStatus);
+        todoItem.setUpdatedAt(LocalDateTime.now());
 
         return updated;
     }
@@ -176,6 +181,9 @@ public class TodoService {
         return res;  // 返回传入对象（此时应已包含生成的ID）
     }
 
+    public TodoItem getTodoById(Long id) {
+        return todoMapper.getTodoById(id);
+    }
 
 
     // 统计信息DTO
