@@ -2,6 +2,7 @@ package org.example.userserver.controller;
 
 import com.github.pagehelper.PageInfo;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Lang;
 import org.example.common.Result;
 import org.example.userserver.entity.User;
 import org.example.userserver.service.UserService;
@@ -26,8 +27,8 @@ public class UserManController {
 
     /**查找所有用户*/
     @GetMapping("/all")
-    public List<User> getUser() {
-        return userService.findAll();
+    public List<User> getUser(String keyword) {
+        return userService.findAll(keyword);
     }
 
     /**查找单个用户*/
@@ -82,11 +83,36 @@ public class UserManController {
      * 查找当页数据
      * pageNum：当前页码
      * pageSize：每页个数
+     * 能根据用户的role属性选择展示数据
      * */
     @GetMapping("/selectPage")
-    public Result selectPage(@RequestParam(defaultValue = "1") int pageNum,
-                             @RequestParam(defaultValue = "10") int pageSize) {
-        PageInfo<User> pageInfo= userService.selectPage(pageNum,pageSize);
+    public Result selectPage(
+                             @RequestParam(defaultValue = "1") int pageNum,
+                             @RequestParam(defaultValue = "10") int pageSize,
+                             @RequestParam(required = false) String keyword) {
+        PageInfo<User> pageInfo= userService.selectPage(pageNum,pageSize,keyword);
+        if(pageInfo == null) {
+            return Result.error();
+        }
+        return Result.success(pageInfo);
+    }
+    @GetMapping("/selectPageUser")
+    public Result selectPageUser(
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) String keyword) {
+        PageInfo<User> pageInfo= userService.selectPageUser(pageNum,pageSize,keyword);
+        if(pageInfo == null) {
+            return Result.error();
+        }
+        return Result.success(pageInfo);
+    }
+    @GetMapping("/selectPageAdmin")
+    public Result selectPageAdmin(
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) String keyword) {
+        PageInfo<User> pageInfo= userService.selectPageAdmin(pageNum,pageSize,keyword);
         if(pageInfo == null) {
             return Result.error();
         }
@@ -100,9 +126,9 @@ public class UserManController {
     @PostMapping("/addUser")
     @PreAuthorize("hasRole('ADMIN')") // 方法级安全控制
     public Result addUser(@RequestBody User user) {
-        if (!user.getRole()) {
-            return Result.error("权限不足");
-        }
+//        if (!user.getRole()) {
+//            return Result.error("权限不足");
+//        }
         userService.addUser(user);
         return Result.success();
     }
@@ -113,9 +139,9 @@ public class UserManController {
     @PostMapping("/addAdmin")
     @PreAuthorize("hasRole('ADMIN')")
     public Result addAdmin(@RequestBody User user) {
-        if (!user.getRole()) {
-            return Result.error("权限不足");
-        }
+//        if (!user.getRole()) {
+//            return Result.error("权限不足");
+//        }
         userService.addAdmin(user);
         return Result.success();
     }
@@ -126,7 +152,7 @@ public class UserManController {
      * */
     @DeleteMapping("/userdelete/one/{id}")
 //    @PreAuthorize("hasRole('ADMIN')")
-    public Result delete(@PathVariable("id") long id) {
+    public Result delete(@PathVariable("id") Long id) {
 //        User user = userService.findById(id);
 //        if (!user.getRole()) {
 //            return Result.error("权限不足");
@@ -139,18 +165,27 @@ public class UserManController {
      * */
     @DeleteMapping("/userdelete/all/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Integer> deleteAll(@PathVariable("id") long id) {
+    public ResponseEntity<Integer> deleteAll(@PathVariable("id") Long id) {
         User user = userService.findById(id);
-        if (!user.getRole()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+//        if (!user.getRole()) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        }
         int deleteCount = userService.deleteAll();
         return deleteCount > 0
                 ? ResponseEntity.ok(deleteCount)
                 : ResponseEntity.noContent().build();
     }
 
-
+/**
+ *
+ * 批量删除。
+ * 后端必须用@RequestBody来接受数组集合
+ * */
+    @DeleteMapping("/deleteBatch")
+    public Result deleteBatch(@RequestBody List<Long> ids) {
+        userService.deleteBatch(ids);
+        return Result.success();
+    }
 
 
 }

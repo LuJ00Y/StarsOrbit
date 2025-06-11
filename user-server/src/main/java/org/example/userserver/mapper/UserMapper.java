@@ -10,9 +10,11 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    @Select("SELECT * from `user`")
-    List<User> findAll();//用来查询ALL对象
+    List<User> findAll(String keyword);//用来查询ALL对象
 
+    List<User> findEnabledUser(String keyword);//用来查询存在用户
+
+    List<User> findEnabledAdmin(String keyword);//用来查询存在管理员
     // 通过邮箱查询用户
     @Select("SELECT * FROM user WHERE email = #{email}")
     User findByEmail(String email);

@@ -2,6 +2,7 @@ package org.example.userserver.controller;
 
 
 import lombok.Data;
+import org.example.common.Result;
 import org.example.userserver.config.RegisterStatus;
 import org.example.userserver.entity.User;
 import org.example.userserver.service.UserService;
@@ -47,7 +48,7 @@ public class UserController {
         private String password;
     }
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateUser(
+    public Result updateUser(
             @PathVariable Long id,
             @RequestBody UserUpdateRequest request) {
 
@@ -68,9 +69,9 @@ public class UserController {
         int updated = userService.updateUser(user);
 
         if (updated > 0) {
-            return ResponseEntity.ok().build();
+            return Result.success();
         } else {
-            return ResponseEntity.notFound().build();
+            return Result.error();
         }
     }
 

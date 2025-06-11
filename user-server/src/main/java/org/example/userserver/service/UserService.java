@@ -3,7 +3,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.example.common.Result;
 import org.example.exception.DuplicateEmailException;
 import org.example.exception.DuplicateUsernameException;
 import org.example.exception.UserNotFoundException;
@@ -25,7 +24,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 //import org.slf4j.Logger;
@@ -60,8 +58,8 @@ public class UserService {
     }
 
 
-    public List<User> findAll() {
-        return userMapper.findAll();
+    public List<User> findAll(String keyword) {
+        return userMapper.findAll(keyword);
     }
     public void addUser(User user) {
         userMapper.addUser(user);
@@ -223,20 +221,36 @@ public class UserService {
         return userMapper.getOneUser(query);
     }
 
-    public PageInfo<User> selectPage(int pageNum, int pageSize) {
+    public PageInfo<User> selectPage(int pageNum, int pageSize,String keyword) {
         PageHelper.startPage(pageNum, pageSize);
-        List<User> list=userMapper.findAll();
+        List<User> list=userMapper.findAll(keyword);
         return PageInfo.of(list);
     }
 
-    public void deleteById(long id) {
+    public PageInfo<User> selectPageUser(int pageNum, int pageSize,String keyword) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<User> list=userMapper.findEnabledUser(keyword);
+        return PageInfo.of(list);
+    }
+
+    public PageInfo<User> selectPageAdmin(int pageNum, int pageSize,String keyword) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<User> list=userMapper.findEnabledAdmin(keyword);
+        return PageInfo.of(list);
+    }
+    public void deleteById(Long id) {
 //        userMapper.deleteById(userMapper.findAll().get(0).getId());
         userMapper.deleteById(id);
     }
-
+    public void deleteBatch(List<Long> ids) {
+        for (Long id : ids) {
+            this.deleteById(id);
+        }
+    }
     public int deleteAll() {
         return userMapper.deleteAll();
     }
+
 
     /**
      *
@@ -286,6 +300,7 @@ public class UserService {
         // 使用 BCrypt 或其他加密算法
         return BCrypt.hashpw(rawPassword, BCrypt.gensalt());
     }
+
 }
 
 
