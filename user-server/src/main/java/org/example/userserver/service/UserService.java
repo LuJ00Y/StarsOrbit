@@ -3,6 +3,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.example.common.Result;
+import org.example.exception.DuplicateEmailException;
+import org.example.exception.DuplicateUsernameException;
+import org.example.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;//法一
 //import org.apache.ibatis.mapping.Environment;
@@ -12,8 +16,10 @@ import org.example.userserver.mapper.PasswordResetTokenMapper;
 import org.example.userserver.mapper.UserMapper;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.View;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -29,10 +35,9 @@ import java.util.UUID;
 @Service
 public class UserService {
 
-    @Value("${app.base-url:http://localhost:8080}")//法二
+    private final View error;
+    @Value("${app.base-url:http://localhost:9080}")//法二
     private String appBaseUrl;
-    public static User myuser;
-
 //    @Autowired
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
@@ -44,13 +49,14 @@ public class UserService {
 //    private static final Logger logger = LoggerFactory.getLogger(PasswordResetService.class);
 
 
-    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, PasswordResetTokenMapper tokenMapper, JavaMailSender mailSender, Environment env, TemplateEngine templateEngine) {
+    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, PasswordResetTokenMapper tokenMapper, JavaMailSender mailSender, Environment env, TemplateEngine templateEngine, View error) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.tokenMapper = tokenMapper;
         this.mailSender = mailSender;
 //        this.env = env;
         this.templateEngine = templateEngine;
+        this.error = error;
     }
 
 
@@ -65,25 +71,6 @@ public class UserService {
     }
     public User findById(long id) {
         return userMapper.findById(id);
-    }
-
-
-    //修改用户信息
-    public void partialUpdateUser(Long id, Map<String, Object> updates) {
-        User user = new User();
-        user.setId(id);
-
-        if (updates.containsKey("username")) {
-            user.setUsername((String) updates.get("username"));
-        }
-        if (updates.containsKey("password")) {
-            user.setPassword((String) updates.get("password"));
-        }
-        if (updates.containsKey("email")) {
-            user.setEmail((String) updates.get("email"));
-        }
-
-        userMapper.updateUserById(user);
     }
 
     /**
@@ -251,7 +238,55 @@ public class UserService {
         return userMapper.deleteAll();
     }
 
+    /**
+     *
+     * */
+    public int updateUser(User user) {
 
+        User existing = userMapper.findById(user.getId());
+        if (existing == null) {
+            throw new UserNotFoundException("用户不存在");
+        }
+        // 验证用户名唯一性（即使相同也检查，因为可能被其他用户占用）
+        if (user.getUsername() != null) {
+            // 只有当用户名实际变化时才检查
+            if (!user.getUsername().equals(existing.getUsername())) {
+                int count = userMapper.countByUsernameExcludingId(
+                        user.getUsername(),
+                        user.getId()
+                );
+                if (count > 0) {
+                    throw new DuplicateUsernameException("用户名已存在");
+                }
+            }
+        }
+
+        if (user.getEmail() != null) {
+            // 只有邮箱变化时才需要检查唯一性
+            if (!user.getEmail().equals(existing.getEmail())) {
+                int count = userMapper.countByEmailExcludingId(
+                        user.getEmail(),
+                        user.getId()
+                );
+                if (count > 0) {
+                    throw new DuplicateEmailException("邮箱已被使用");
+                }
+            }
+        }
+
+        // 密码加密（如果提供新密码）
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            user.setPassword(encodePassword(user.getPassword()));
+        }
+        return userMapper.updateUser(user);
+    }
+
+
+    private String encodePassword(String rawPassword) {
+        // 使用 BCrypt 或其他加密算法
+        return BCrypt.hashpw(rawPassword, BCrypt.gensalt());
+    }
+}
 
 
 //    @Transactional
@@ -264,4 +299,3 @@ public class UserService {
 //        eventPublisher.publishEvent(event);
 //    }
 
-}

@@ -99,6 +99,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <!--安全依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
         <!--分页查询插件-->
         <dependency>
             <groupId>com.github.pagehelper</groupId>

@@ -1,0 +1,9 @@
+实现管理员身份验证，集成 Spring Security 并配置基于角色的访问控制。
+1、导入依赖
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+2、新建配置文件
+public class SecurityConfig {
+3、修改控制器方法

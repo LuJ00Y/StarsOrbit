@@ -10,6 +10,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.View;
 
@@ -93,44 +94,60 @@ public class UserManController {
     }
 
     /**
-     * 增加用户
+     * 增加用户- 仅管理员
      * 返回结果为影响行数
      * */
     @PostMapping("/addUser")
+    @PreAuthorize("hasRole('ADMIN')") // 方法级安全控制
     public Result addUser(@RequestBody User user) {
+        if (!user.getRole()) {
+            return Result.error("权限不足");
+        }
         userService.addUser(user);
         return Result.success();
     }
     /**
-     * 增加管理员
+     * 增加管理员- 仅管理员
      * 返回结果为影响行数
      * */
     @PostMapping("/addAdmin")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result addAdmin(@RequestBody User user) {
+        if (!user.getRole()) {
+            return Result.error("权限不足");
+        }
         userService.addAdmin(user);
         return Result.success();
     }
 
 
-    /**软删除用户
+    /**软删除用户 - 仅管理员
      *删除单个
      * */
-    @DeleteMapping("/userdelete/{id}")
+    @DeleteMapping("/userdelete/one/{id}")
+//    @PreAuthorize("hasRole('ADMIN')")
     public Result delete(@PathVariable("id") long id) {
+//        User user = userService.findById(id);
+//        if (!user.getRole()) {
+//            return Result.error("权限不足");
+//        }
         userService.deleteById(id);
         return Result.success();
     }
-    /**软删除用户
+    /**软删除用户 - 仅管理员
      *删除all
      * */
-    @DeleteMapping("/userdelete/all")
-    public ResponseEntity<Integer> delete() {
-        int deleteCount = userService.deleteAll();
-        if(deleteCount <=0) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }else {
-            return new ResponseEntity<>(deleteCount, HttpStatus.OK);
+    @DeleteMapping("/userdelete/all/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Integer> deleteAll(@PathVariable("id") long id) {
+        User user = userService.findById(id);
+        if (!user.getRole()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+        int deleteCount = userService.deleteAll();
+        return deleteCount > 0
+                ? ResponseEntity.ok(deleteCount)
+                : ResponseEntity.noContent().build();
     }
 
 

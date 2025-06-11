@@ -63,4 +63,11 @@ public interface UserMapper {
     @Insert("INSERT INTO `tododb`.`user` (`username`, `password`, `email`, `role`, `enabled`)" +
             "VALUES (#{username},#{password},#{email},false,true);")
     int register(User user);
+
+    int updateUser(User user);
+
+
+    int countByUsernameExcludingId(String username, Long id);
+
+    int countByEmailExcludingId(String email, Long id);
 }

@@ -3,6 +3,27 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.example.userserver.mapper.UserMapper">
+    <update id="updateUser">
+        UPDATE user
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="role != null">
+                role = #{role},
+            </if>
+            <if test="enabled != null">
+                enabled = #{enabled},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
     <select id="getOneUser" resultType="org.example.userserver.entity.User">
         SELECT * FROM user
         <where>
@@ -23,4 +44,11 @@
             </if>
         </where>
     </select>
+    <select id="countByUsernameExcludingId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM user WHERE username = #{username} AND id != #{id}
+    </select>
+    <select id="countByEmailExcludingId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM user WHERE email = #{email} AND id != #{id}
+    </select>
+
 </mapper>

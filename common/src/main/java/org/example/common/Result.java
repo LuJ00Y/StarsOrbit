@@ -1,9 +1,10 @@
 package org.example.common;
 
 import lombok.Data;
+import org.springframework.web.servlet.View;
 
 @Data
-public class Result {
+public class Result extends Throwable {
     private String code;
     private String message;
     private Object data;
@@ -38,6 +39,9 @@ public class Result {
     }
 
 
-
-
+    public static Result error(String message) {
+        Result result=new Result();
+        result.setMessage(message);
+        return result;
+    }
 }
