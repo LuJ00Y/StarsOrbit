@@ -3,6 +3,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.example.common.Result;
 import org.example.exception.DuplicateEmailException;
 import org.example.exception.DuplicateUsernameException;
 import org.example.exception.UserNotFoundException;
@@ -39,7 +40,7 @@ public class UserService {
 //    @Autowired
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final PasswordResetTokenMapper tokenMapper;
+//    private final PasswordResetTokenMapper tokenMapper;
     private final JavaMailSender mailSender;
 //    private final Environment env;
     private final TemplateEngine templateEngine;
@@ -47,10 +48,10 @@ public class UserService {
 //    private static final Logger logger = LoggerFactory.getLogger(PasswordResetService.class);
 
 
-    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, PasswordResetTokenMapper tokenMapper, JavaMailSender mailSender, Environment env, TemplateEngine templateEngine, View error) {
+    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, JavaMailSender mailSender, Environment env, TemplateEngine templateEngine, View error) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
-        this.tokenMapper = tokenMapper;
+//        this.tokenMapper = tokenMapper;
         this.mailSender = mailSender;
 //        this.env = env;
         this.templateEngine = templateEngine;
@@ -69,6 +70,31 @@ public class UserService {
     }
     public User findById(long id) {
         return userMapper.findById(id);
+    }
+
+    public int login(User user) {
+        // 1. 验证必要字段
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("邮箱不能为空");
+        }
+        // 2. 密码非空检查
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            return 4; // 密码为空错误码
+        }
+        // 检查邮箱是否存在
+        User existingUser = userMapper.findByEmail(user.getEmail());
+        if (existingUser == null) {
+            return 1; // 用户不存在
+        }
+        // 检查用户是否死亡
+        if (!existingUser.getEnabled()) {
+            return 1; // 用户不存在
+        }
+        //检查密码是否对应
+        if(!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+            return 2;//密码或用户名错误!
+        }
+        return 0;
     }
 
     /**
@@ -140,74 +166,6 @@ public class UserService {
     }
 
 
-    // 新增密码找回方法
-    public void requestPasswordReset(String email) throws MessagingException {
-        User user = userMapper.findByEmail(email);
-        if (user == null) {
-            // 出于安全考虑，不告知用户邮箱不存在
-            return;
-        }
-
-        // 生成唯一令牌
-        String token = UUID.randomUUID().toString();
-
-        // 创建或更新重置令牌
-        PasswordResetToken resetToken = tokenMapper.findByUserId(user.getId());
-        if (resetToken != null) {
-            resetToken.setToken(token);
-            resetToken.setExpiryDate(new Date());
-            resetToken.setUsed(false);
-            tokenMapper.updateToken(resetToken);
-        } else {
-            resetToken = new PasswordResetToken(user, token);
-            tokenMapper.saveToken(resetToken);
-        }
-
-        // 发送密码重置邮件
-        sendPasswordResetEmail(user.getEmail(), token);
-    }
-    // 重置密码
-    public boolean resetPassword(String token, String newPassword) {
-        PasswordResetToken resetToken = tokenMapper.findByToken(token);
-
-        if (resetToken == null || resetToken.isUsed() || resetToken.isExpired()) {
-            return false;
-        }
-
-        // 更新用户密码
-        User user = resetToken.getUser();
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userMapper.updatePassword(user);
-
-        // 标记令牌为已使用
-        resetToken.setUsed(true);
-        tokenMapper.updateToken(resetToken);
-
-        return true;
-    }
-    private void sendPasswordResetEmail(String email, String token) {
-        String resetUrl = appBaseUrl + "/auth/reset-password?token=" + token;
-
-        MimeMessage message = mailSender.createMimeMessage();
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("noreply@example.com");
-            helper.setTo(email);
-            helper.setSubject("密码重置请求");
-
-            // 使用模板创建HTML内容
-            Context context = new Context();
-            context.setVariable("resetUrl", resetUrl);
-            // 处理模板
-            String htmlContent = templateEngine.process("password-reset-email", context);
-
-            helper.setText(htmlContent, true); // true表示HTML内容
-
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException("邮件发送失败", e);
-        }
-    }
 
 //    public void save(User user) {
 //        userMapper.save(user);
@@ -300,6 +258,7 @@ public class UserService {
         // 使用 BCrypt 或其他加密算法
         return BCrypt.hashpw(rawPassword, BCrypt.gensalt());
     }
+
 
 }
 

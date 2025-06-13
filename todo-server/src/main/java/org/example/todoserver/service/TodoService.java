@@ -1,5 +1,7 @@
 package org.example.todoserver.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import org.example.todoserver.entity.TodoItem;
@@ -185,7 +187,15 @@ public class TodoService {
         return todoMapper.getTodoById(id);
     }
 
-
+    /**
+     * 用户清单的模糊查找
+     * 需要有用户ID
+     * */
+    public PageInfo<TodoItem> selectPage(int pageNum, int pageSize, String keyword, Long userId) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<TodoItem> list=todoMapper.findTodoByNameOrType(keyword,userId);
+        return PageInfo.of(list);
+    }
     // 统计信息DTO
     @Data
     public static class TodoStats {

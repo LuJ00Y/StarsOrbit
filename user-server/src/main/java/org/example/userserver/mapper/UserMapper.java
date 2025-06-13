@@ -2,6 +2,7 @@ package org.example.userserver.mapper;
 
 import jakarta.transaction.Transactional;
 import org.apache.ibatis.annotations.*;
+import org.example.common.Result;
 import org.example.userserver.entity.PasswordResetToken;
 import org.example.userserver.entity.User;
 

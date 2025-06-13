@@ -29,5 +29,5 @@ public interface PasswordResetTokenMapper {
             "WHERE id = #{id}")
     void updateToken(PasswordResetToken token);
 
-    PasswordResetToken findByUserId(Long id);
+//    PasswordResetToken findByUserId(Long id);
 }

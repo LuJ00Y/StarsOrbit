@@ -44,7 +44,10 @@ public class TodoController {
 //        return "index";
 //    }
 
-    // 获取用户所有待办事项
+    /**
+     * 获取用户所有
+     * 未删除的
+     * 待办事项*/
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<TodoItem>> getUserTodos(@PathVariable Long userId) {
         List<TodoItem> todos = todoService.getUserTodos(userId);

@@ -44,4 +44,6 @@ public interface TodoMapper extends CrudRepository<TodoItem, Long> {
     int toggleTodoStatus(@Param("id") Long id, @Param("complete") Boolean complete);
 
     TodoItem getTodoById(Long id);
+
+    List<TodoItem> findTodoByNameOrType(String keyword, Long userId);
 }

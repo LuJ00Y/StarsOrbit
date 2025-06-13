@@ -17,15 +17,15 @@ public class LoginRegController {
     @Autowired
     UserService userService;
 
-    @RequestMapping("/login_error")
-    public Result loginError() {
-        return new Result("error", "登录失败!");
-    }
-
-    @RequestMapping("/login_success")
-    public Result loginSuccess() {
-        return new Result("success", "登录成功!");
-    }
+//    @RequestMapping("/login_error")
+//    public Result loginError() {
+//        return new Result("error", "登录失败!");
+//    }
+//
+//    @RequestMapping("/login_success")
+//    public Result loginSuccess() {
+//        return new Result("success", "登录成功!");
+//    }
 
     /**
      * 如果自动跳转到这个页面，说明用户未登录，返回相应的提示即可
@@ -34,9 +34,32 @@ public class LoginRegController {
      *
      * @return
      */
-    @RequestMapping("/login")
-    public Result loginPage() {
-        return new Result("error", "尚未登录，请登录!");
+//    @RequestMapping("/login")
+//    public Result loginPage() {
+//        return new Result("error", "尚未登录，请登录!");
+//    }
+
+    @PostMapping("/loginByEmail")
+    public ResponseEntity<Result> loginByEmail(@RequestBody User user) {
+        try {
+            int result = userService.login(user);
+            switch (result) {
+                case 0:
+                    return ResponseEntity.ok(new Result("success", "登录成功!"));
+                case 1:
+                    return ResponseEntity.badRequest().body(new Result("error", "用户不存在"));
+                case 2:
+                    return ResponseEntity.internalServerError().body(new Result("error", "密码或用户名错误!"));
+                case 4:
+                    return ResponseEntity.badRequest().body(new Result("error", "密码不能为空!"));
+                case 5:
+                    return ResponseEntity.badRequest().body(new Result("error", "用户名不能为空!"));
+                default:
+                    return ResponseEntity.internalServerError().body(new Result("error", "未知错误"));
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new Result("error", e.getMessage()));
+        }
     }
 
     @PostMapping("/register")
