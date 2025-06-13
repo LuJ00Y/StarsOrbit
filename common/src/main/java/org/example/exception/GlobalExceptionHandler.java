@@ -71,7 +71,30 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<Object> handleCustomException(
+            CustomException ex, WebRequest request) {
 
+        // 根据自定义异常中的状态码确定 HTTP 状态
+        HttpStatus status;
+        try {
+            int statusCode = Integer.parseInt(ex.getCode());
+            status = HttpStatus.resolve(statusCode);
+            if (status == null) {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        } catch (NumberFormatException e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                status.value(),
+                ex.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(errorResponse, status);
+    }
 
     // 错误响应DTO
     @Data

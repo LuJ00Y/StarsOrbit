@@ -3,6 +3,8 @@ package org.example.userserver.controller;
 import org.example.common.Result;
 import org.example.userserver.entity.User;
 import org.example.userserver.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class LoginRegController {
 
+    private static final Logger log = LoggerFactory.getLogger(LoginRegController.class);
     @Autowired
     UserService userService;
 
@@ -39,27 +42,34 @@ public class LoginRegController {
 //        return new Result("error", "尚未登录，请登录!");
 //    }
 
-    @PostMapping("/loginByEmail")
-    public ResponseEntity<Result> loginByEmail(@RequestBody User user) {
-        try {
-            int result = userService.login(user);
-            switch (result) {
-                case 0:
-                    return ResponseEntity.ok(new Result("success", "登录成功!"));
-                case 1:
-                    return ResponseEntity.badRequest().body(new Result("error", "用户不存在"));
-                case 2:
-                    return ResponseEntity.internalServerError().body(new Result("error", "密码或用户名错误!"));
-                case 4:
-                    return ResponseEntity.badRequest().body(new Result("error", "密码不能为空!"));
-                case 5:
-                    return ResponseEntity.badRequest().body(new Result("error", "用户名不能为空!"));
-                default:
-                    return ResponseEntity.internalServerError().body(new Result("error", "未知错误"));
-            }
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new Result("error", e.getMessage()));
-        }
+/**
+ * 登录逻辑——不返回data*/
+//    @PostMapping("/loginByEmail")
+//    public Result loginByEmail(@RequestBody User user) {
+//        try {
+//            int result = userService.login(user);
+//            switch (result) {
+//                case 0:
+//                    return Result.success();
+//                case 1:
+//                    return new Result("error", "用户不存在");
+//                case 2:
+//                    return new Result("error", "密码或用户名错误!");
+//                case 4:
+//                    return new Result("error", "密码不能为空!");
+//                case 5:
+//                    return new Result("error", "用户名不能为空!");
+//                default:
+//                    return new Result("error", "未知错误");
+//            }
+//        } catch (IllegalArgumentException e) {
+//            return new Result("error", e.getMessage());
+//        }
+//    }
+    @PostMapping("Login")
+    public Result login(@RequestBody User user) {
+        User dbuser =userService.loginByEmail(user);
+        return Result.success(dbuser);
     }
 
     @PostMapping("/register")

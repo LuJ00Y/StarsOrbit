@@ -29,7 +29,8 @@ import java.util.UUID;
 
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
-
+import org.example.exception.GlobalExceptionHandler;
+import org.example.exception.CustomException;
 
 @Service
 public class UserService {
@@ -96,7 +97,28 @@ public class UserService {
         }
         return 0;
     }
+    public User loginByEmail(User user) {
+        String email = user.getEmail();
+        User dbUser = userMapper.findByEmail(email);
 
+        if (dbUser == null) {
+            // 使用 404 表示用户不存在
+            throw new CustomException("404", "账号不存在");
+        }
+
+        String password = user.getPassword();
+        if (!passwordEncoder.matches(password, dbUser.getPassword())) {
+            // 使用 401 表示未授权
+            throw new CustomException("401", "账号或密码错误");
+        }
+
+        if (!dbUser.getEnabled()) {
+            // 使用 403 表示禁止访问（账户禁用）
+            throw new CustomException("403", "账户已被禁用");
+        }
+        return dbUser;
+
+    }
     /**
      * 注册新用户
      * @param user
@@ -258,6 +280,7 @@ public class UserService {
         // 使用 BCrypt 或其他加密算法
         return BCrypt.hashpw(rawPassword, BCrypt.gensalt());
     }
+
 
 
 }
