@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/todos")
@@ -43,7 +44,15 @@ public class TodoController {
 //        //添加了一个新的TodoItem对象到Model中，用于表单提交新项
 //        return "index";
 //    }
+    /**
+     * 查询当个用户的信息
+     */
+    @GetMapping("/{userId}")
+    public List<TodoItem> getTodos(@PathVariable Long userId) {
 
+        List<TodoItem> todos = todoService.getTodos(userId);
+        return todos;
+    }
     /**
      * 获取用户所有
      * 未删除的
@@ -114,6 +123,17 @@ public class TodoController {
         return ResponseEntity.ok(updatedTodo);
     }
 
+    // 统一更新接口
+    @PutMapping("/updateNameOrType/{id}")
+    public ResponseEntity<TodoItem> updateTodo(
+            @PathVariable Long id,
+            @RequestBody TodoItem todoItem,
+            @RequestHeader("X-User-Id") Long userId
+    ) {
+        todoItem.setUserId(userId);
+        TodoItem updatedTodo = todoService.updateTodo(id, todoItem);
+        return ResponseEntity.ok(updatedTodo);
+    }
 
     //tag
     // 切换任务完成状态
@@ -156,13 +176,7 @@ public class TodoController {
         return ResponseEntity.ok(stats);
     }
 
-    /**
-    * 查询当个用户的信息
-    */
-    @GetMapping("/{userId}")
-    public List<TodoItem> getTodos(@PathVariable Long userId) {
-        return todoService.getTodos(userId);
-    }
+
 //    /**
 //     * 查询当个用户的信息
 //     */

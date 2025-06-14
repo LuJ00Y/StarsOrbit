@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
+import org.example.exception.UnauthorizedException;
 import org.example.todoserver.entity.TodoItem;
 import org.example.todoserver.mapper.TodoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+
 @Service
 public class TodoService {
 
@@ -196,6 +199,32 @@ public class TodoService {
         List<TodoItem> list=todoMapper.findTodoByNameOrType(keyword,userId);
         return PageInfo.of(list);
     }
+
+    public TodoItem updateTodo(Long id,TodoItem todoItem) {
+        // 验证用户
+        if (todoItem.getUserId() == null) {
+            throw new IllegalArgumentException("用户未登录");
+        }
+
+        // 获取现有待办项
+        TodoItem existing = (TodoItem) todoMapper.findTodoById(id)
+                .orElseThrow(() -> new EntityNotFoundException("没有找到id为" + id + "的待办事项"));
+
+        // 验证用户所有权
+        if (!todoItem.getUserId().equals(existing.getUserId())) {
+            throw new UnauthorizedException("无权修改此任务");
+        }
+        // 更新字段（只更新非空字段）
+        if (todoItem.getName() != null) existing.setName(todoItem.getName());
+        if (todoItem.getCategory() != null) existing.setCategory(todoItem.getCategory());
+        // 执行更新
+        int updated = todoMapper.updateTodo(existing);
+        if (updated == 0) throw new RuntimeException("更新失败");
+
+        return existing;
+
+    }
+
     // 统计信息DTO
     @Data
     public static class TodoStats {

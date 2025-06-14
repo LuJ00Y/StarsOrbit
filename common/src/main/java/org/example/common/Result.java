@@ -44,4 +44,12 @@ public class Result extends Throwable {
         result.setMessage(message);
         return result;
     }
+
+    public static Result error(String code, String message) {
+        Result result=new Result();
+        result.setCode(code);
+        result.setMessage(message);
+        return result;
+    }
+
 }

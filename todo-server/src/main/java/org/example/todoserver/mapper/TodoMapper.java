@@ -46,4 +46,6 @@ public interface TodoMapper extends CrudRepository<TodoItem, Long> {
     TodoItem getTodoById(Long id);
 
     List<TodoItem> findTodoByNameOrType(String keyword, Long userId);
+
+    int updateTodo(TodoItem existing);
 }

@@ -31,9 +31,17 @@
         SET `complete` = #{complete}
         WHERE `deleted` = false AND `id` = #{id};
     </update>
+    <update id="updateTodo" parameterType="org.example.todoserver.entity.TodoItem">
+        UPDATE todo_item
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="category != null">category = #{category},</if>
+        </set>
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
 
     <select id="findByUserIdAndDeletedFalse" resultType="org.example.todoserver.entity.TodoItem">
-        SELECT todo_item.* FROM todo_item WHERE  user_id=#{userId} AND deleted = FALSE;
+        SELECT * FROM todo_item WHERE  user_id=#{userId} AND deleted = FALSE;
     </select>
     <select id="findByUserId" resultType="org.example.todoserver.entity.TodoItem">
         SELECT todo_item.* FROM todo_item,`user` WHERE user_id=`user`.id AND user_id=#{userId};

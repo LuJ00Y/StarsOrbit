@@ -1,6 +1,7 @@
 package org.example.userserver.controller;
 
 import org.example.common.Result;
+import org.example.userserver.entity.RegisterDTO;
 import org.example.userserver.entity.User;
 import org.example.userserver.service.UserService;
 import org.slf4j.Logger;
@@ -73,9 +74,28 @@ public class LoginRegController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Result> reg(@RequestBody User user) { // 添加 @RequestBody
+    public ResponseEntity<Result> reg( @RequestBody RegisterDTO registerDTO) { // 添加 @RequestBody
         try {
+            // 检查密码匹配
+            if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
+                return ResponseEntity.badRequest().body(Result.error("400", "两次输入的密码不一致"));
+            }
+
+            // 检查是否同意条款
+            if (registerDTO.getAgree() == null || !registerDTO.getAgree()) {
+                return ResponseEntity.badRequest().body(Result.error("400", "请同意服务条款"));
+            }
+
+
+            // 创建用户对象
+            User user = new User();
+            user.setUsername(registerDTO.getUsername());
+            user.setEmail(registerDTO.getEmail());
+            user.setPassword(registerDTO.getPassword());
+
+            // 调用服务
             int result = userService.register(user);
+
             switch (result) {
                 case 0:
                     return ResponseEntity.ok(new Result("success", "注册成功!"));
@@ -94,5 +114,6 @@ public class LoginRegController {
             return ResponseEntity.badRequest().body(new Result("error", e.getMessage()));
         }
     }
+
 
 }
