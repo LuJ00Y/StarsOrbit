@@ -5,6 +5,8 @@ mybatis:
 #  config-location: classpath:/mybatis-config.xml
   mapper-locations: classpath:org/example/todoserver/mapper/*.xml
   type-aliases-package: org.example.mapper
+  configuration:
+    map-underscore-to-camel-case: true
 spring:
   application:
     name: todo-server
