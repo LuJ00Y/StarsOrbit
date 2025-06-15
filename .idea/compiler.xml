@@ -9,13 +9,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="todo-server" />
         <module name="common" />
-        <module name="audit-service" />
         <module name="user-server" />
-        <module name="admin-service" />
         <module name="gateway-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="admin-service" target="17" />
+      <module name="audit-service" target="17" />
       <module name="commons" target="17" />
       <module name="commons-module" target="17" />
       <module name="gateway-server" target="17" />

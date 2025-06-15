@@ -19,6 +19,8 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/admin-service/pom.xml" />
+        <option value="$PROJECT_DIR$/audit-service/pom.xml" />
         <option value="$PROJECT_DIR$/commons-module/pom.xml" />
         <option value="$PROJECT_DIR$/commons/pom.xml" />
         <option value="$PROJECT_DIR$/gateway-server/pom.xml" />

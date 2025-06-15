@@ -23,8 +23,6 @@
 	<modules>
 		<module>user-server</module>
 		<module>todo-server</module>
-		<module>admin-service</module>
-		<module>audit-service</module>
 		<module>gateway-service</module>
 		<module>common</module>
 	</modules>
