@@ -1,18 +1,12 @@
 # 使用多阶段构建
 FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
-COPY pom.xml .
-COPY common/pom.xml common/
-COPY todo-server/pom.xml todo-server/
-# 下载依赖
-RUN mvn dependency:go-offline -B
 
-# 复制源代码
-COPY common/src common/src
-COPY todo-server/src todo-server/src
+# 复制整个项目
+COPY . .
 
-# 构建应用
-RUN mvn clean package -DskipTests
+# 构建项目
+RUN mvn clean package -DskipTests -pl todo-server
 
 # 运行阶段
 FROM openjdk:17-slim
