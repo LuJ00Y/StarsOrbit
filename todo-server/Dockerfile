@@ -5,7 +5,10 @@ WORKDIR /app
 # 复制整个项目
 COPY . .
 
-# 构建项目
+# 先构建 common 模块
+RUN mvn clean install -DskipTests -pl common
+
+# 构建 todo-server
 RUN mvn clean package -DskipTests -pl todo-server
 
 # 运行阶段
